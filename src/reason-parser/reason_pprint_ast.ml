@@ -5452,6 +5452,11 @@ let createFormatter () =
              here *)
           let return, optConstr =
             match ret.pexp_desc with
+            (* Keep a package constraint on the body: as a return annotation,
+               `(module Foo)` re-parses as the start of an arrow type, which
+               changes the meaning of the printed code (see #2925). *)
+            | Pexp_constraint (_, { ptyp_desc = Ptyp_package _; _ }) ->
+              ret, None
             | Pexp_constraint (e, ct) -> e, Some (self#non_arrowed_core_type ct)
             | _ -> ret, None
           in
@@ -9753,6 +9758,11 @@ let createFormatter () =
             in
             let retCb, cbArgs =
               match retCb.pexp_desc with
+              (* Keep a package constraint on the body: as a return annotation,
+                 `(module Foo)` re-parses as the start of an arrow type, which
+                 changes the meaning of the printed code (see #2925). *)
+              | Pexp_constraint (_, { ptyp_desc = Ptyp_package _; _ }) ->
+                retCb, cbArgs
               | Pexp_constraint (a, t) ->
                 a, makeList [ cbArgs; atom ": "; self#core_type t ]
               | _ -> retCb, cbArgs
