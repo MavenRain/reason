@@ -737,9 +737,6 @@ let is_simple_construct : construct -> bool = function
   | `nil | `tuple | `list _ | `simple _ | `btrue | `bfalse | `cons _ -> true
   | `normal -> false
 
-(* A package constraint must stay on the lambda body: as a return annotation,
-   `(module Foo)` re-parses as the start of an arrow type, which changes the
-   meaning of the printed code (see #2925). *)
 let is_package_typ ct =
   match ct.ptyp_desc with Ptyp_package _ -> true | _ -> false
 
